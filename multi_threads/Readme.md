@@ -10,5 +10,3 @@ Nothing platform specific shall be used here, so building this tool just needs
 
     cargo run
 
-## License
-MIT. Means, when you use anything from this code, you do so on your own risk.

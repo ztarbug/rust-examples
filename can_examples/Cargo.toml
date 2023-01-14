@@ -1,0 +1,10 @@
+[package]
+name = "can_examples"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+socketcan = "1.7.0"
+embedded-can = "0.4.1"
