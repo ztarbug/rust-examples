@@ -3,4 +3,4 @@ This is a collection of small examples, that shall help anyone new with the Rust
 
 ## Examples
 
-* Multi Threads [Example](multi_threads/README.md)
+* Multi Threads [Example](multi_threads/Readme.md)
