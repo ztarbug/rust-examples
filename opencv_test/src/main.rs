@@ -52,6 +52,9 @@ fn run_display() {
             break;
         }
     }
+    
+    highgui::destroy_all_windows()
+        .expect("failed to delete all UI elements");
 }
 
 fn save_image() {
@@ -62,5 +65,7 @@ fn save_image() {
     cam.read(&mut frame).unwrap();
     imgcodecs::imwrite("test.jpg", &frame, &params)
         .expect("didn't work");
-
+    
+    cam.release()
+        .expect("Couldn't release video device");
 }
