@@ -7,10 +7,12 @@ use opencv::{
 };
 
 use opencv::core::Vector;
+use opencv::videoio::CAP_FFMPEG;
 
 enum Function {
     Display,
-    Save
+    Save,
+    Rtsp
 }
 
 impl Function {
@@ -18,6 +20,7 @@ impl Function {
         match s {
             "display" => Ok(Function::Display),
             "save" => Ok(Function::Save),
+            "rtsp" => Ok(Function::Rtsp),
             _ => Err("couldn't parse command")
         }
     }
@@ -30,7 +33,8 @@ fn main() {
         Ok(f) => {
             match f {
                 Function::Display => run_display(),
-                Function::Save => save_image()
+                Function::Save => save_image(),
+                Function::Rtsp => open_rtsp(),
             }
         },
         Err(s) => panic!("{}", s),
@@ -68,4 +72,30 @@ fn save_image() {
     
     cam.release()
         .expect("Couldn't release video device");
+}
+
+fn open_rtsp() {
+    let url:&str = "rtsp://localhost:554";
+    let cam = videoio::VideoCapture::from_file(url, CAP_FFMPEG);
+    match cam {
+        Ok(mut cam) => {
+            println!("opened rtsp");
+            highgui::named_window("window", highgui::WINDOW_FULLSCREEN).unwrap();
+            loop {
+                let mut frame = Mat::default();
+                cam.read(&mut frame).unwrap();
+                highgui::imshow("window", &frame).unwrap();              
+                let key = highgui::wait_key(1).unwrap();
+                    if key == 113 { // quit with q 
+                        break;
+                }
+            }
+            cam.release()
+                .expect("Couldn't release video device");
+        },
+        Err(e) => {
+            println!("RTSP didn't work {}", e);
+            return;
+        }
+    }
 }
