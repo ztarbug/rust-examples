@@ -1,0 +1,32 @@
+[package]
+name = "grpc-stream"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[dependencies]
+opencv = "0.76.3"
+
+futures-executor = "0.3.26"
+futures = "0.3.26"
+futures-core = "0.3.26"
+async-stream = "0.3.3"
+tokio = { version = "1.25.0", features = ["full"] }
+tokio-stream = "0.1.11"
+
+tonic = { version = "0.8.3", features = ["transport", "tls"] }
+prost = "0.11.3"
+prost-types = "0.11.2"
+protobuf = "3.2.0"
+
+ctrlc = "3.2.4"
+
+[build-dependencies]
+tonic-build = "0.8.4"

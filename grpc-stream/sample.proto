@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package sample;
+
+message ImageStream {
+    bytes image = 1;
+}
+
+message StreamResponse {
+    string message = 1;
+}
+
+service SampleService {
+    rpc SendStream(stream ImageStream) returns (StreamResponse);
+}
