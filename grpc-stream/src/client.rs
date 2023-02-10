@@ -9,6 +9,15 @@ use std::time::Duration;
 
 use std::sync::mpsc;
 
+use opencv::{
+    prelude::*,
+    videoio,
+    imgcodecs::*
+};
+
+use opencv::core::Vector;
+
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
@@ -24,24 +33,39 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start = time::Instant::now();
     
     let outbound = async_stream::stream! {
-        let mut interval = time::interval(Duration::from_secs(1));
+        let mut interval = time::interval(Duration::from_millis(150));
+
+        let mut cam = videoio::VideoCapture::new(0, videoio::CAP_ANY).unwrap();
+        let mut frame = Mat::default();
 
         loop {
 
             if let Ok(()) = rx.try_recv() {
+                cam.release()
+                    .expect("closing cam didn't work");
                 break;
             };
 
-            let mut image_bytes: Vec<u8> = Vec::new();
-            image_bytes.push(1);
-            image_bytes.push(2);
-            image_bytes.push(3);
+            cam.read(&mut frame).unwrap();
+            
+            let mut jpg_buf: Vector<u8> = Vector::new();
+            let params: Vector<i32> = Vector::new();
+
+            match imencode(".jpg", &frame, &mut jpg_buf, &params) {
+                Ok(b) => {
+                    println!("Encode result {} with size {}", b, jpg_buf.len());
+                }
+                Err(e) => {
+                    println!("Converting to image didn't work: {e}");
+                }
+            }
 
             let time = interval.tick().await; //delay            
             let elapsed = time.duration_since(start);
 
             let i = ImageStream {
-                image: image_bytes            };
+                image: jpg_buf.as_slice().to_owned()
+            };
             println!("Time passed {:?}", elapsed);
 
             yield i;
